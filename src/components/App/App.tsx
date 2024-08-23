@@ -1,0 +1,129 @@
+import css from './App.module.css';
+
+import { useState, useEffect } from 'react';
+import { fetchData } from '../../image-api';
+import toast, { Toaster } from 'react-hot-toast';
+import { MagnifyingGlass } from 'react-loader-spinner';
+
+import ErrorMessage from '../ErrorMessage/ErrorMessage';
+import ImageGallery from '../ImageGallery/ImageGallery';
+import ImageModal from '../ImageModal/ImageModal';
+import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
+import SearchBar from '../SearchBar/SearchBar';
+
+import { Image } from "./App.types";
+
+
+
+
+
+export default function App() {
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [page, setPage] = useState<number>(1);
+    const [images, setImages] = useState<Image[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<boolean>(false);
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+    const [modalContent, setModalContent] = useState({});
+  
+    useEffect(() => {
+      if (searchQuery.trim() === '') {
+        return;
+      }
+
+    
+      const getData = async () => {
+        try {
+          setLoading(true);
+          setError(false);
+  
+         
+  
+          if (data.total_pages === 0) {
+            return toast.error('No results!');
+          }
+  
+          setImages(previousImages => [...previousImages, ...data.results]);
+        } catch (error) {
+          setError(true);
+          toast.error('Error! Please reload the page.');
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      getData();
+    }, [searchQuery, page]);
+  
+    const endOfResults = Math.ceil(images.total_pages / 10); // per_page: 10
+    const numberOfCards = images.length > 0;
+  
+    const handleSubmit = (query: string) => {
+      if (query === searchQuery) {
+        return toast.error('You wrote the same! 📝');
+      }
+  
+      setPage(1);
+      setImages([]);
+      setSearchQuery(query);
+    };
+  
+    const handleLoadMore = () => {
+      if (page >= endOfResults) {
+        return toast.error(
+          'Sorry, but you have reached the end of search results!'
+        );
+      }
+      setPage(page + 1);
+    };
+  
+    const openModal = (value: string) => {
+      setModalContent(value);
+      setModalIsOpen(true);
+    };
+  
+    const closeModal: () => void = () => {
+      setModalIsOpen(false);
+    };
+  
+
+
+    return (
+      <div className={css.container}>
+        <SearchBar query={searchQuery} onSearch={handleSubmit} />
+  
+        {error && (
+          <ErrorMessage>
+            Something went wrong! Please reload the page 🚩
+          </ErrorMessage>
+        )}
+  
+        {numberOfCards && (
+          <ImageGallery images={images} onOpenModal={openModal} />
+        )}
+        {numberOfCards && !loading && <LoadMoreBtn onLoadMore={handleLoadMore} />}
+  
+        {loading && (
+          <div className={css.loader}>
+            <MagnifyingGlass
+              visible={true}
+              height="80"
+              width="80"
+              ariaLabel="magnifying-glass-loading"
+              wrapperStyle={{}}
+              wrapperClass="magnifying-glass-wrapper"
+              glassColor="#c0efff"
+              color="#000"
+            />
+          </div>
+        )}
+        <ImageModal
+          value={modalContent}
+          modalIsOpen={modalIsOpen}
+          onCloseModal={closeModal}
+        />
+        <Toaster position="top-center" reverseOrder={false} />
+      </div>
+    );
+
+}

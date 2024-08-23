@@ -1,0 +1,17 @@
+.container {
+    padding: 10px;
+}
+  
+@media screen and (min-width: 768px) {
+    .container {
+      padding: 50px;
+    }
+  
+    .loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  
+      padding: 50px;
+    }
+}

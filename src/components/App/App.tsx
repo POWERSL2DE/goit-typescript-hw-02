@@ -1,7 +1,6 @@
 import css from './App.module.css';
 
 import { useState, useEffect } from 'react';
-import { fetchData } from '../../image-api';
 import toast, { Toaster } from 'react-hot-toast';
 import { MagnifyingGlass } from 'react-loader-spinner';
 
@@ -12,9 +11,14 @@ import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
 import SearchBar from '../SearchBar/SearchBar';
 
 import { Image } from "./App.types";
+import { fetchData } from '../../image-api';
 
 
 
+interface Responce {
+  results:[];
+  total: number;
+}
 
 
 export default function App() {
@@ -37,7 +41,9 @@ export default function App() {
           setLoading(true);
           setError(false);
   
-         
+          
+          const resonse = await getImages<Responce>(searchQuery, page);
+          const { results, total } = resonse;
   
           if (data.total_pages === 0) {
             return toast.error('No results!');
@@ -55,6 +61,8 @@ export default function App() {
       getData();
     }, [searchQuery, page]);
   
+
+
     const endOfResults = Math.ceil(images.total_pages / 10); // per_page: 10
     const numberOfCards = images.length > 0;
   

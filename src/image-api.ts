@@ -1,16 +1,20 @@
 import axios from 'axios';
+import { ApiSearchResponse } from "./App.types";
 
-export async function fetchData<T>(searchQuery: string, page: number): Promise<T> {
-  axios.defaults.baseURL = 'https://api.unsplash.com';
 
-  const response = await axios.get<T>('/search/photos', {
-    params: {
-      client_id: 'WQte5tUczRGJeybmP_5ZIUTrHW_TWHIy2fxah8dxyTE',
-      query: searchQuery,
-      page,
-      per_page: 10,
-      orientation: 'landscape',
-    },
+axios.defaults.baseURL = "https://api.unsplash.com";
+const ACESS_KEY = 'd-L6wwOxVoHwVTK9MU_8WHUKXbZoMbaGJ5WvRLBqdN8'
+
+export const getImages = async( query: string, page: number): Promise<ApiSearchResponse> => {
+  const response = await axios.get<ApiSearchResponse>("/search/photos", {
+      params: {
+          per_page: 20,
+          page: page,
+            query: query
+      },
+      headers: {
+            Authorization: `Client-ID ${ACESS_KEY}`,
+          },
   });
   return response.data;
-}
+};

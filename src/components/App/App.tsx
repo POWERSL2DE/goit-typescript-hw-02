@@ -10,73 +10,87 @@ import ImageModal from '../ImageModal/ImageModal';
 import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
 import SearchBar from '../SearchBar/SearchBar';
 
-import { Image } from "./App.types";
-import { fetchData } from '../../image-api';
-
-
-
-interface Responce {
-  results:[];
-  total: number;
-}
+import { ApiSearchResponse, PhotoType } from '../../App.types';
+import { getImages } from '../../image-api';
 
 
 export default function App() {
-    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [query, setQuery] = useState<string>('');
+    const [isMounted, setIsMounted] = useState<boolean>(false);
+    const [photos, setPhotos] = useState<PhotoType[]>([]);
     const [page, setPage] = useState<number>(1);
-    const [images, setImages] = useState<Image[]>([]);
+    const [totalPages, setTotalPages] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-    const [modalContent, setModalContent] = useState({});
+    const [modalImgURL, setmodalImgURL] = useState<string>('');
   
     useEffect(() => {
-      if (searchQuery.trim() === '') {
-        return;
-      }
-
-    
-      const getData = async () => {
+      async function fetchImages() {
         try {
           setLoading(true);
           setError(false);
-  
-          
-          const resonse = await getImages<Responce>(searchQuery, page);
-          const { results, total } = resonse;
-  
-          if (data.total_pages === 0) {
-            return toast.error('No results!');
-          }
-  
-          setImages(previousImages => [...previousImages, ...data.results]);
+          const list: ApiSearchResponse = await getImages(query, page)
+
+            setPhotos((prevState: PhotoType[]) => [...prevState, ...list.results])
+            setTotalPages(list.total_pages)
+
         } catch (error) {
+          console.log(error);
           setError(true);
-          toast.error('Error! Please reload the page.');
         } finally {
           setLoading(false);
         }
-      };
-  
-      getData();
-    }, [searchQuery, page]);
-  
+      }
+
+        if (isMounted) {
+          fetchImages();
+      } else {
+        setIsMounted(true);
+      }
+    }, [query, page]);
 
 
-    const endOfResults = Math.ceil(images.total_pages / 10); // per_page: 10
-    const numberOfCards = images.length > 0;
+
+    //   if (searchQuery.trim() === '') {
+    //     return;
+    //   }
+
+    //   const getData = async () => {
+    //     try {
+    //       setLoading(true);
+    //       setError(false);
   
-    const handleSubmit = (query: string) => {
-      if (query === searchQuery) {
+          
+    //       const resonse = await getImages<Responce>(searchQuery, page);
+          
+    //       if (data.total_pages === 0) {
+    //         return toast.error('No results!');
+    //       }
+  
+    //       setImages(previousImages => [...previousImages, ...data.results]);
+    //     } catch (error) {
+    //       setError(true);
+    //       toast.error('Error! Please reload the page.');
+    //     } finally {
+    //       setLoading(false);
+    //     }
+    //   };
+  
+    //   getData();
+    // }, [searchQuery, page]);
+  
+    const handleSearch = async (value : string) => {
+      if (query === value) {
         return toast.error('You wrote the same! 📝');
       }
-  
+
+      setQuery(value);
       setPage(1);
-      setImages([]);
-      setSearchQuery(query);
-    };
-  
-    const handleLoadMore = () => {
+      setPhotos([]);
+    }
+
+    const handleLoadMore = async () => {
       if (page >= endOfResults) {
         return toast.error(
           'Sorry, but you have reached the end of search results!'
@@ -84,33 +98,46 @@ export default function App() {
       }
       setPage(page + 1);
     };
+    
+    const endOfResults = Math.ceil(photos.length / 10); // per_page: 10 
   
-    const openModal = (value: string) => {
-      setModalContent(value);
+    // const handleSubmit = (query: string) => {
+    //   if (query === searchQuery) {
+    //     return toast.error('You wrote the same! 📝');
+    //   }
+  
+    //   setPage(1);
+    //   setImages([]);
+    //   setSearchQuery(query);
+    // };
+  
+  const handleModalOpen = () => {
+      // setmodalImgURL(value);
       setModalIsOpen(true);
-    };
+  };
   
-    const closeModal: () => void = () => {
+  const handleModalClose = () => {
       setModalIsOpen(false);
-    };
+  };
   
+  const handleModalImg = (url: string) => {
+      setmodalImgURL(url);
+  }
 
+  
 
     return (
       <div className={css.container}>
-        <SearchBar query={searchQuery} onSearch={handleSubmit} />
-  
+        <SearchBar setSearchData={handleSearch} />
+        
         {error && (
           <ErrorMessage>
             Something went wrong! Please reload the page 🚩
           </ErrorMessage>
         )}
   
-        {numberOfCards && (
-          <ImageGallery images={images} onOpenModal={openModal} />
-        )}
-        {numberOfCards && !loading && <LoadMoreBtn onLoadMore={handleLoadMore} />}
-  
+        {photos.length > 0 && (<ImageGallery photos={photos} modalOpen={handleModalOpen} setModalUrl={handleModalImg}/>)}
+        {photos.length > 0 && !loading && page < totalPages && <LoadMoreBtn onLoadMore={handleLoadMore}/>}
         {loading && (
           <div className={css.loader}>
             <MagnifyingGlass
@@ -125,11 +152,7 @@ export default function App() {
             />
           </div>
         )}
-        <ImageModal
-          value={modalContent}
-          modalIsOpen={modalIsOpen}
-          onCloseModal={closeModal}
-        />
+        <ImageModal modalUrl={modalImgURL} modalIsOpen={modalIsOpen} onRequestClose={handleModalClose} />
         <Toaster position="top-center" reverseOrder={false} />
       </div>
     );

@@ -1,27 +1,37 @@
-import css from './ImageModal.module.css';
 
 import Modal from 'react-modal';
 import { FaRegGrinHearts, FaRegUser } from 'react-icons/fa';
+import css from './ImageModal.module.css';
+import { ObjectType } from '../../App.types';
+import { PhotoType } from '../../App.types';
 
 
 interface ImageModalProps {
   modalIsOpen: boolean;
-  onCloseModal: () => void;
-  value: {
-    imgRegular: string;
-    description: string;
-    likes: number;
-    name: string;
-  } ,
+  onRequestClose: () => void;
+  modalUrl: string;
+  // photos: PhotoType[];
+  photo: PhotoType;
+  onPhotosClick: (photo: PhotoType) => void;
+  
+
+  // (modalUrl: PhotoType) : void;
+  // value: {
+  //   imgRegular: string;
+  //   description: string;
+  //   likes: number;
+  //   name: string;
+    
+  // },
+
+
 }
 
 
-export default function ImageModal({
-  value: { imgRegular, description, likes, name },
-  modalIsOpen,
-  onCloseModal,
-}: ImageModalProps) {
-  const customStyles = {
+export default function ImageModal({ photo, modalUrl, modalIsOpen, onRequestClose, onPhotosClick}: ImageModalProps) {
+  Modal.setAppElement('#root');
+
+  const customStyles: ObjectType = {
     content: {
       maxWidth: '800px',
       top: '50%',
@@ -37,26 +47,37 @@ export default function ImageModal({
     },
   };
 
-  Modal.setAppElement('#root');
+
 
   return (
-    <Modal
+    <Modal 
       isOpen={modalIsOpen}
-      onRequestClose={onCloseModal}
-      style={customStyles}
+      onRequestClose={onRequestClose}
+      style={customStyles} 
     >
-      <img src={imgRegular} alt={description} />
+
+      <img 
+          src={modalUrl} 
+          alt={photo.description} 
+          onClick={() => onPhotosClick(photo)}
+      />
+
       <div className={css.container}>
+
         <div className={css.info}>
           <FaRegUser className={css.icon} />
-          <p className={css.description}>{name}</p>
+          <p className={css.description}>{photo.user.name}</p>
         </div>
+
         <div className={css.info}>
           <FaRegGrinHearts className={css.icon} />
-          <p className={css.description}>{likes}</p>
+          <p className={css.description}>{photo.likes}</p>
         </div>
+
       </div>
+
     </Modal>
+
   );
   
 }

@@ -1,25 +1,32 @@
+import { PhotoType } from '../../App.types';
 import ImageCard from '../ImageCard/ImageCard';
 import css from './ImageGallery.module.css';
 
-import { Image } from "../App/App.types";
-import { Link } from "../App/App.types";
 
-interface ImageGalleryProps {
-  images: Image[];
-  onOpenModal: (slug: string) => void;
+interface IImageGallery {
+  photos: PhotoType[];
+  modalOpen: () => void;
+  setModalUrl: (url: string) => void;
 }
 
 
-const ImageGallery: React.FC<ImageGalleryProps> = ({ images, onOpenModal }) => {
-  return (
-    <ul className={css.container}>
-      {images.map(( { id, urls, slug }) => (
-        <li key={id}>
-          <ImageCard images={urls} imgSlug={slug} onOpenModal={onOpenModal} />
-        </li>
-      ))}
-    </ul>
-  );
+const ImageGallery: React.FC <IImageGallery> = ({ photos, modalOpen, setModalUrl }) =>  {
+
+const handlePhotoClick = (photo: PhotoType) => {
+  setModalUrl(photo.urls.regular);
+  modalOpen();
 };
 
-export default ImageGallery;
+return (
+  <ul className={css.container}>
+    {photos.map((photo) => (
+      <li key={photo.id} >
+        <ImageCard photo={photo} onPhotoClick={handlePhotoClick} />
+      </li>
+    ))}
+  </ul>
+  );
+
+}
+
+export default ImageGallery

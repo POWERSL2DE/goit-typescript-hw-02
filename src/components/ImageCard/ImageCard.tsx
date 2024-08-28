@@ -1,58 +1,53 @@
-import css from './ImageCard.module.css';
+// import React from 'react';
 import { FaRegGrinHearts, FaRegUser } from 'react-icons/fa';
-// import { Link } from "../App/App.types";
+import css from './ImageCard.module.css';
+import { PhotoType } from '../../App.types';
 
 
-interface ImageCardProps {
-  // imgRegular: Link;
-  image: {
-    description: string;
-    urls: string;
-    likes: number;
-    user: { name: string };
-  },
-  onOpenModal: (imgRegular: string, description: string, likes: number, name: string, src: string) => void;
+interface ImageCardTypes {
+  // image: {
+  //    description: string;
+  //    urls: string;
+  //    likes: number;
+  //    user: { name: string };
+  // },
+
+  photo: PhotoType;
+  onPhotoClick: (photo: PhotoType) => void;
 }
 
 
-export default function ImageCard({
-  image: {
-    description,
-    urls,
-    likes,
-    user: { name },
+export default function ImageCard({onPhotoClick, photo,
+  // image: {
+  //   description,
+  //   urls,
+  //   likes,
+  //   user: { name },
     
-  },
-  onOpenModal,
-}: ImageCardProps) {
+  // },
+}: ImageCardTypes) {
+
   return (
     <div className={css.card}>
       <img
         className={css.image}
-        onClick={() =>
-          onOpenModal({
-            imgRegular: urls.regular,
-            description,
-            likes,
-            name,
-          })
-        }
-        src={urls.small}
-        alt={description}
+        onClick={() => onPhotoClick(photo)}
+        src={photo.urls.small}
+        alt={photo.description}
       />
 
       <div className={css.container}>
         <div className={css.info}>
           <FaRegUser className={css.icon} />
-          <p className={css.description}>{name}</p>
+          <p className={css.description}>{photo.user.name}</p>
         </div>
 
         <div className={css.info}>
           <FaRegGrinHearts className={css.icon} />
-          <p className={css.description}>{likes}</p>
+          <p className={css.description}>{photo.likes}</p>
         </div>
-        
       </div>
+      
     </div>
   );
 

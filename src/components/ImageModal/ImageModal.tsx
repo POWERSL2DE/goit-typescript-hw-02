@@ -12,7 +12,7 @@ interface ImageModalProps {
   modalUrl: string;
   // photos: PhotoType[];
   photo: PhotoType;
-  onPhotosClick: (photo: PhotoType) => void;
+  // onPhotosClick: (photo: PhotoType) => void;
   
 
   // (modalUrl: PhotoType) : void;
@@ -28,7 +28,7 @@ interface ImageModalProps {
 }
 
 
-export default function ImageModal({ photo, modalUrl, modalIsOpen, onRequestClose, onPhotosClick}: ImageModalProps) {
+export default function ImageModal({ photo, modalUrl, modalIsOpen, onRequestClose}: ImageModalProps) {
   Modal.setAppElement('#root');
 
   const customStyles: ObjectType = {
@@ -50,6 +50,7 @@ export default function ImageModal({ photo, modalUrl, modalIsOpen, onRequestClos
 
 
   return (
+
     <Modal 
       isOpen={modalIsOpen}
       onRequestClose={onRequestClose}
@@ -59,7 +60,7 @@ export default function ImageModal({ photo, modalUrl, modalIsOpen, onRequestClos
       <img 
           src={modalUrl} 
           alt={photo.description} 
-          onClick={() => onPhotosClick(photo)}
+          // onClick={() => onPhotosClick(photo)}
       />
 
       <div className={css.container}>

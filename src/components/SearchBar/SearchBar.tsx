@@ -20,9 +20,9 @@ const SearchBar:React.FC<ISearchBar> = ({ setSearchData }) => {
         onSubmit={(values, actions) => {
 
         if (values.query.trim() === '') {
-          setSearchData(values.query);
-        } else {
           toast.error('You need to enter text to find pictures 🔍');
+        } else {
+          setSearchData(values.query);
         }
 
         actions.resetForm();

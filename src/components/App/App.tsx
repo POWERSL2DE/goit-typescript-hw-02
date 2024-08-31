@@ -24,7 +24,9 @@ export default function App() {
     const [error, setError] = useState<boolean>(false);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
     const [modalImgURL, setmodalImgURL] = useState<string>('');
-  
+    // const [, onPhotosClick] = useState<PhotoType[]>([]);
+
+    
     useEffect(() => {
       async function fetchImages() {
         try {
@@ -124,7 +126,11 @@ export default function App() {
       setmodalImgURL(url);
   }
 
-  
+  // const handlePhotoClick = () => {
+  //     setPhotos(photos);
+  // }
+
+
 
     return (
       <div className={css.container}>

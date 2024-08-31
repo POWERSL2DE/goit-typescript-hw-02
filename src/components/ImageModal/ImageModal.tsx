@@ -9,9 +9,10 @@ import { PhotoType } from '../../App.types';
 interface ImageModalProps {
   modalIsOpen: boolean;
   onRequestClose: () => void;
-  modalUrl: string;
+  photo: PhotoType | null;
+  // modalUrl: string;
   // photos: PhotoType[];
-  photo: PhotoType;
+  
   // onPhotosClick: (photo: PhotoType) => void;
   
 
@@ -28,7 +29,7 @@ interface ImageModalProps {
 }
 
 
-export default function ImageModal({ photo, modalUrl, modalIsOpen, onRequestClose}: ImageModalProps) {
+export default function ImageModal({ photo, modalIsOpen, onRequestClose}: ImageModalProps) {
   Modal.setAppElement('#root');
 
   const customStyles: ObjectType = {
@@ -58,8 +59,8 @@ export default function ImageModal({ photo, modalUrl, modalIsOpen, onRequestClos
     >
 
       <img 
-          src={modalUrl} 
-          alt={photo.description} 
+          src={photo?.urls.regular} 
+          alt={photo?.description} 
           // onClick={() => onPhotosClick(photo)}
       />
 
@@ -67,12 +68,12 @@ export default function ImageModal({ photo, modalUrl, modalIsOpen, onRequestClos
 
         <div className={css.info}>
           <FaRegUser className={css.icon} />
-          <p className={css.description}>{photo.user.name}</p>
+          <p className={css.description}>{photo?.user.name}</p>
         </div>
 
         <div className={css.info}>
           <FaRegGrinHearts className={css.icon} />
-          <p className={css.description}>{photo.likes}</p>
+          <p className={css.description}>{photo?.likes}</p>
         </div>
 
       </div>

@@ -6,14 +6,14 @@ import css from './ImageGallery.module.css';
 interface IImageGallery {
   photos: PhotoType[];
   modalOpen: () => void;
-  setModalUrl: (url: string) => void;
+  setModalUrl: (photo: PhotoType) => void;
 }
 
 
 const ImageGallery: React.FC <IImageGallery> = ({ photos, modalOpen, setModalUrl }) =>  {
 
 const handlePhotoClick = (photo: PhotoType) => {
-  setModalUrl(photo.urls.regular);
+  setModalUrl(photo);
   modalOpen();
 };
 

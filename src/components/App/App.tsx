@@ -23,7 +23,7 @@ export default function App() {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
     const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-    const [modalImgURL, setmodalImgURL] = useState<string>('');
+    const [modalImgURL, setmodalImgURL] = useState<PhotoType | null>(null);
     // const [, onPhotosClick] = useState<PhotoType[]>([]);
 
     
@@ -122,8 +122,8 @@ export default function App() {
       setModalIsOpen(false);
   };
   
-  const handleModalImg = (url: string) => {
-      setmodalImgURL(url);
+  const handleModalImg = (photo: PhotoType) => {
+      setmodalImgURL(photo);
   }
 
   // const handlePhotoClick = () => {
@@ -158,7 +158,7 @@ export default function App() {
             />
           </div>
         )}
-        <ImageModal modalUrl={modalImgURL} modalIsOpen={modalIsOpen} onRequestClose={handleModalClose} />
+        <ImageModal photo={modalImgURL} modalIsOpen={modalIsOpen} onRequestClose={handleModalClose} />
         <Toaster position="top-center" reverseOrder={false} />
       </div>
     );
